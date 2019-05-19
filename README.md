@@ -1,5 +1,7 @@
 # Docker static
 
+[![Build Status](https://api.cirrus-ci.com/github/dirkdev98/docker-static.svg)](https://cirrus-ci.com/github/dirkdev98/docker-static)
+
 Simple static server written in Go with basic prometheus metrics
 
 Inspired by: [PierreZ/goStatic](https://github.com/PierreZ/goStatic)

@@ -7,20 +7,3 @@ test_task:
   get_script: go get ./...
   build_script: go build ./...
   test_script: go test ./...
-
-docker_builder:
-  only_if: $CIRRUS_TAG != ''
-  depends_on:
-    - test
-  env:
-    CONTAINER_NAME: dirkdev98/docker-static
-    DOCKER_USERNAME: ENCRYPTED[f46e98b197e7023a8897eb7979a726625560de846d4ae36f60c348c0dffa57e6b7e56a7e21bf0e145b866a5bd2d0375f]
-    DOCKER_PASSWORD: ENCRYPTED[a9689f330129f1ddd1e9963baad609c0d1726c0e61a6f299254962f6119e199388ac26949dc12d04bac35f529a41c7bd]
-
-  build_script:
-    - docker pull $CONTAINER_NAME:latest || true
-    - docker build --cache-from $CONTAINER_NAME:latest --tag $CONTAINER_NAME:$CIRRUS_TAG --tag $CONTAINER_NAME:latest .
-  login_script: docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
-  push_script:
-    - docker push $CONTAINER_NAME:$CIRRUS_TAG
-    - docker push $CONTAINER_NAME:latest
