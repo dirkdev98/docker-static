@@ -37,16 +37,13 @@ func main() {
 		monitoringHandler := static.MonitoringHandler(opts)
 
 		log.Printf("Listening at 0.0.0.0%v for monitoring", monitoringPort)
-		if err := http.ListenAndServe(port, monitoringHandler); err != nil {
-			log.Fatalln(err)
-		}
+		go func() {
+			log.Fatalln(http.ListenAndServe(monitoringPort, monitoringHandler))
+		}()
 	}
 
 	staticHandler := static.ServerHandler(opts)
 
 	log.Printf("Listening at 0.0.0.0%v for static files", port)
-	if err := http.ListenAndServe(port, staticHandler); err != nil {
-		log.Fatalln(err)
-	}
-
+	log.Fatalln(http.ListenAndServe(port, staticHandler))
 }
