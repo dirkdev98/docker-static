@@ -1,6 +1,11 @@
 # Docker static
 
 [![Build Status](https://api.cirrus-ci.com/github/dirkdev98/docker-static.svg)](https://cirrus-ci.com/github/dirkdev98/docker-static)
+[![](https://images.microbadger.com/badges/version/dirkdev98/docker-static.svg)](https://microbadger.com/images/dirkdev98/docker-static)
+![Docker Pulls](https://img.shields.io/docker/pulls/dirkdev98/docker-static.svg)
+[![](https://images.microbadger.com/badges/image/dirkdev98/docker-static.svg)](https://microbadger.com/images/dirkdev98/docker-static)
+
+
 
 Simple static server written in Go with basic prometheus metrics
 
@@ -65,3 +70,7 @@ FROM dirkdev98/docker-static
 COPY --from=build-deps /usr/src/app/build /public
 CMD ["/docker-static", "-fallback", "index.html", "-maxAge", "7200"]
 ```
+
+## License
+
+MIT Copyright (c) 2019 Dirk de Visser
