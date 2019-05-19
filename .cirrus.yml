@@ -1,0 +1,22 @@
+test_task:
+  image: golang:latest
+  modules_cache:
+    fingerprint_script: cat go.sum
+    folder: $GOPATH/pkg/mod
+  get_script: go get ./...
+  build_script: go build ./...
+  test_script: go test ./...
+
+docker_builder:
+  only_if: $CIRRUS_TAG != ''
+  depends_on:
+    - test
+  env:
+    - CONTAINER_NAME: dirkdev98/docker-static
+  build_script:
+    - docker pull $CONTAINER_NAME:latest || true
+    - docker build --cache-from $CONTAINER_NAME:latest --tag $CONTAINER_NAME:$CIRRUS_TAG --tag $CONTAINER_NAME:latest .
+  login_script: docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
+  push_script:
+    - docker push $CONTAINER_NAME:$CIRRUS_TAG
+    - docker push $CONTAINER_NAME:latest
