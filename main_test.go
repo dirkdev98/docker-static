@@ -10,10 +10,10 @@ import (
 
 func TestCacheControl(t *testing.T) {
 	opts := &static.Options{
-		Path:         ".",
-		FallbackPath: "index.html",
-		BasicAuth:    "",
-		MaxAge:       125,
+		Path:      ".",
+		Fallback:  true,
+		BasicAuth: "",
+		MaxAge:    125,
 	}
 
 	server := httptest.NewServer(static.ServerHandler(opts))
@@ -37,10 +37,10 @@ func TestCacheControl(t *testing.T) {
 
 func TestStaticAuth(t *testing.T) {
 	opts := &static.Options{
-		Path:         ".",
-		FallbackPath: "index.html",
-		BasicAuth:    "user:pass",
-		MaxAge:       10,
+		Path:      ".",
+		Fallback:  true,
+		BasicAuth: "user:pass",
+		MaxAge:    10,
 	}
 
 	server := httptest.NewServer(static.ServerHandler(opts))
@@ -120,10 +120,10 @@ func TestStaticAuth(t *testing.T) {
 
 func TestPathAndFallback(t *testing.T) {
 	opts := &static.Options{
-		Path:         ".",
-		FallbackPath: "",
-		BasicAuth:    "",
-		MaxAge:       10,
+		Path:      ".",
+		Fallback:  false,
+		BasicAuth: "",
+		MaxAge:    10,
 	}
 
 	server := httptest.NewServer(static.ServerHandler(opts))
@@ -162,7 +162,7 @@ func TestPathAndFallback(t *testing.T) {
 	})
 
 	server.Close()
-	opts.FallbackPath = "index.html"
+	opts.Fallback = true
 
 	server = httptest.NewServer(static.ServerHandler(opts))
 
@@ -204,10 +204,10 @@ func TestPathAndFallback(t *testing.T) {
 
 func TestMonitoring(t *testing.T) {
 	opts := &static.Options{
-		Path:         ".",
-		FallbackPath: "",
-		BasicAuth:    "",
-		MaxAge:       10,
+		Path:      ".",
+		Fallback:  false,
+		BasicAuth: "",
+		MaxAge:    10,
 	}
 
 	server := httptest.NewServer(static.MonitoringHandler(opts))

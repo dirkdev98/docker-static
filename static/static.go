@@ -5,18 +5,18 @@ import (
 )
 
 type Options struct {
-	Path         string
-	FallbackPath string
-	BasicAuth    string
-	MaxAge       int
+	Path      string
+	Fallback  bool
+	BasicAuth string
+	MaxAge    int
 }
 
 func (s *server) handleStatic() logWriterFunc {
 	var fileSystem http.FileSystem = http.Dir(s.staticOptions.Path)
 
-	if len(s.staticOptions.FallbackPath) != 0 {
+	if s.staticOptions.Fallback {
 		fileSystem = fallback{
-			defaultPath: s.staticOptions.Path + "/" + s.staticOptions.FallbackPath,
+			defaultPath: "index.html",
 			fs:          fileSystem,
 		}
 	}

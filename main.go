@@ -3,9 +3,10 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/NYTimes/gziphandler"
 	"github.com/dirkdev98/docker-static/static"
-	"log"
 	"net/http"
+	"time"
 )
 
 var (
@@ -13,7 +14,7 @@ var (
 	enableMonitoring  = flag.Bool("monitoring", true, "Enable or disable monitoring")
 	monitoringPortPtr = flag.Int("monitoringPort", 9600, "Monitoring port to listen on")
 	path              = flag.String("path", "/public", "Path on which files will be found")
-	fallbackPath      = flag.String("fallback", "", "Default file that will be served")
+	enableFallback    = flag.Bool("fallback", true, "Automatically try to serve index.html if file is not found")
 	basicAuth         = flag.String("auth", "", "Basic authorization in form of username:password")
 	maxAge            = flag.Int("maxAge", 3600, "Cache-Control header value")
 )
@@ -27,23 +28,34 @@ func main() {
 	static.InitMetrics()
 
 	opts := &static.Options{
-		Path:         *path,
-		FallbackPath: *fallbackPath,
-		BasicAuth:    *basicAuth,
-		MaxAge:       *maxAge,
+		Path:      *path,
+		Fallback:  *enableFallback,
+		BasicAuth: *basicAuth,
+		MaxAge:    *maxAge,
 	}
 
 	if *enableMonitoring {
 		monitoringHandler := static.MonitoringHandler(opts)
 
-		log.Printf("Listening at 0.0.0.0%v for monitoring", monitoringPort)
+		fmt.Printf("{\"level\": \"info\", \"timestamp\": \"%s\", \"type\": \"HTTP_STATIC_START\", \"message\": \"Listening at 0.0.0.0%v for monitoring\"}", time.Now().Format(time.RFC3339), monitoringPort)
+		fmt.Println()
 		go func() {
-			log.Fatalln(http.ListenAndServe(monitoringPort, monitoringHandler))
+			err := http.ListenAndServe(monitoringPort, monitoringHandler)
+			if err != nil {
+				fmt.Printf("{\"level\": \"error\", \"timestamp\": \"%s\", \"type\": \"HTTP_STATIC_ERROR\", \"message\": \"%s\"}", time.Now().Format(time.RFC3339), err)
+				fmt.Println()
+			}
 		}()
 	}
 
-	staticHandler := static.ServerHandler(opts)
+	staticHandler := gziphandler.GzipHandler(http.HandlerFunc(static.ServerHandler(opts)))
 
-	log.Printf("Listening at 0.0.0.0%v for static files", port)
-	log.Fatalln(http.ListenAndServe(port, staticHandler))
+	fmt.Printf("{\"level\": \"info\", \"timestamp\": \"%s\", \"type\": \"HTTP_STATIC_START\", \"message\": \"Listening at 0.0.0.0%v for static files\"}", time.Now().Format(time.RFC3339), port)
+	fmt.Println()
+
+	err := http.ListenAndServe(port, staticHandler)
+	if err != nil {
+		fmt.Printf("{\"level\": \"error\", \"timestamp\": \"%s\", \"type\": \"HTTP_STATIC_ERROR\", \"message\": \"%s\"}", time.Now().Format(time.RFC3339), err)
+		fmt.Println()
+	}
 }

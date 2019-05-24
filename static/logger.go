@@ -7,15 +7,23 @@ import (
 	"time"
 )
 
+const (
+  level = "info"
+  logType = "HTTP_STATIC_LOG"
+)
+
 type logData struct {
-	Host           string
-	Remote         string
-	Method         string
-	Path           string
-	Status         int
-	ResponseLength int
-	UserAgent      string
-	Duration       float64
+    Level          string  `json:"level"`
+    Timestamp      string  `json:"timestamp"`
+    Type           string  `json:"type"`
+	Host           string  `json:"host"`
+	Remote         string  `json:"remote"`
+	Method         string  `json:"method"`
+	Path           string  `json:"path"`
+	Status         int     `json:"status"`
+	ResponseLength int     `json:"responseLength"`
+	UserAgent      string  `json:"userAgent"`
+	Duration       float64 `json:"duration"`
 }
 
 type logWriter struct {
@@ -52,6 +60,9 @@ func (s *server) logMiddleware(h logWriterFunc) http.HandlerFunc {
 
 		defer func() {
 			err := out.Encode(logData{
+			    Level:          level,
+			    Type:           logType,
+			    Timestamp:      time.Now().Format(time.RFC3339),
 				Host:           r.Host,
 				Remote:         r.RemoteAddr,
 				Method:         r.Method,

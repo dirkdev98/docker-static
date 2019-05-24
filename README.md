@@ -18,8 +18,8 @@ $ /docker-static [args]
 
 -auth string
     Basic authorization in form of username:password
--fallback string
-    Default file that will be served
+-fallback
+    Automatically try to serve index.html if file is not found (default true)
 -maxAge int
     Cache-Control header value (default 3600)
 -monitoring
@@ -52,7 +52,7 @@ to stdout and stderr with the expectation that a different system will handle lo
 
 Simple run:
 ```bash
-$ docker run -v ./path/to/public:/public dirkdev98/docker-static -fallback index.html
+$ docker run -v ./path/to/public:/public dirkdev98/docker-static
 ```
 
 Multistage build with for example a React app
@@ -68,7 +68,7 @@ RUN yarn build
 # Build final image with only the builded files
 FROM dirkdev98/docker-static
 COPY --from=build-deps /usr/src/app/build /public
-CMD ["/docker-static", "-fallback", "index.html", "-maxAge", "7200"]
+CMD ["/docker-static", "-maxAge", "7200"]
 ```
 
 ## License
