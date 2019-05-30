@@ -1,11 +1,12 @@
 package main
 
 import (
-	"github.com/dirkdev98/docker-static/static"
 	"log"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/dirkdev98/docker-static/static"
 )
 
 func TestCacheControl(t *testing.T) {

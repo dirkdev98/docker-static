@@ -3,10 +3,12 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/NYTimes/gziphandler"
-	"github.com/dirkdev98/docker-static/static"
 	"net/http"
 	"time"
+
+	"github.com/NYTimes/gziphandler"
+
+	"github.com/dirkdev98/docker-static/static"
 )
 
 var (
