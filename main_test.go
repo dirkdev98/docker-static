@@ -210,8 +210,7 @@ func TestMonitoring(t *testing.T) {
 		BasicAuth: "",
 		MaxAge:    10,
 	}
-
-	server := httptest.NewServer(static.MonitoringHandler(opts))
+	server := httptest.NewServer(static.ServerHandler(opts))
 
 	t.Run("GET /health always ok", func(t *testing.T) {
 		res, err := http.Get(server.URL + "/health")
@@ -222,22 +221,5 @@ func TestMonitoring(t *testing.T) {
 		if res.StatusCode != 200 {
 			t.Fail()
 		}
-	})
-
-	t.Run("GET /metrics", func(t *testing.T) {
-		res, err := http.Get(server.URL + "/metrics")
-		if err != nil {
-			log.Fatalln(err)
-		}
-
-		if res.StatusCode != 200 {
-			t.Fail()
-		}
-	})
-
-	server.Close()
-
-	t.Run("Init metrics does not panic", func(t *testing.T) {
-		static.InitMetrics()
 	})
 }

@@ -30,7 +30,6 @@ func (s *server) authMiddleware(next logWriterFunc) logWriterFunc {
 		auth := strings.SplitN(r.Header.Get("Authorization"), " ", 2)
 
 		if auth[0] != "Basic" {
-			authCount.WithLabelValues("failure").Inc()
 			http.Error(w, "authorization failed", http.StatusUnauthorized)
 			return
 		}
@@ -38,7 +37,6 @@ func (s *server) authMiddleware(next logWriterFunc) logWriterFunc {
 		payload, err := base64.StdEncoding.DecodeString(auth[1])
 
 		if err != nil {
-			authCount.WithLabelValues("failure").Inc()
 			log.Println(err)
 			http.Error(w, "authorization failed", http.StatusUnauthorized)
 			return
@@ -46,12 +44,10 @@ func (s *server) authMiddleware(next logWriterFunc) logWriterFunc {
 
 		pair := strings.SplitN(string(payload), ":", 2)
 		if strings.Compare(pair[0], username) != 0 || strings.Compare(pair[1], password) != 0 {
-			authCount.WithLabelValues("failure").Inc()
 			http.Error(w, "authorization failed", http.StatusUnauthorized)
 			return
 		}
 
-		authCount.WithLabelValues("success").Inc()
 		next(w, r)
 	}
 }
