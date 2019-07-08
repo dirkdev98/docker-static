@@ -12,8 +12,8 @@ func ServerHandler(opts *Options) http.HandlerFunc {
 		router:        http.NewServeMux(),
 		staticOptions: opts,
 	}
-	s.routes()
 	s.monitoringRoutes()
+	s.routes()
 
 	return s.router.ServeHTTP
 }
